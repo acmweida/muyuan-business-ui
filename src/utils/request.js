@@ -77,7 +77,12 @@ service.interceptors.response.use(res => {
       })
       return Promise.reject('error')
     } else {
-      return res.data
+      if (res.data.code != 0) {
+        Notification.error({
+          title: msg
+        })
+      }
+      return res.data.data
     }
   },
   error => {
