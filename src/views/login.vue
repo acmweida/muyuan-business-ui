@@ -1,9 +1,9 @@
 <template>
   <div class="login">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
-      <h3 class="title">运营管理系统</h3>
+      <h3 class="title">牧原商家后台</h3>
       <el-form-item prop="username">
-        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
+        <el-input v-model="loginForm.account" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
@@ -62,17 +62,17 @@ export default {
   name: "Login",
   data() {
     return {
-      codeUrl: "http://localhost:8082/images/image.jsp?",
+      codeUrl: "",
       cookiePassword: "",
       loginForm: {
-        username: "",
+        account: "",
         password: "",
         rememberMe: false,
         code: "",
         uuid: ""
       },
       loginRules: {
-        username: [
+        account: [
           { required: true, trigger: "blur", message: "用户名不能为空" }
         ],
         password: [
@@ -94,27 +94,26 @@ export default {
     }
   },
   created() {
-    // this.getCode();
+    this.getCode();
     this.getCookie();
   },
   methods: {
     getCode() {
       this.codeUrl = "";
-      this.codeUrl = "http://localhost:8082/images/image.jsp?_"+ Date.parse(new Date());
-      // getCodeImg().then(res => {
-      //   this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff;
-      //   if (this.captchaOnOff) {
-      //     this.codeUrl = "data:image/jpeg;base64," + res.img;
-      //     this.loginForm.uuid = res.uuid;
-      //   }
-      // });
+      getCodeImg().then(res => {
+        this.captchaOnOff = res.captchaOnOff === undefined ? true : res.captchaOnOff;
+        if (this.captchaOnOff) {
+          this.codeUrl = "data:image/gif;base64," + res.img;
+          this.loginForm.uuid = res.uuid;
+        }
+      });
     },
     getCookie() {
-      const username = Cookies.get("username");
+      const account = Cookies.get("account");
       const password = Cookies.get("password");
       const rememberMe = Cookies.get('rememberMe')
       this.loginForm = {
-        username: username === undefined ? this.loginForm.username : username,
+        username: account === undefined ? this.loginForm.account : account,
         password: password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
@@ -122,13 +121,14 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
+          debugger;
           this.loading = true;
           if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.username, { expires: 30 });
+            Cookies.set("account", this.loginForm.account, { expires: 30 });
             Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
             Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
           } else {
-            Cookies.remove("username");
+            Cookies.remove("account");
             Cookies.remove("password");
             Cookies.remove('rememberMe');
           }
