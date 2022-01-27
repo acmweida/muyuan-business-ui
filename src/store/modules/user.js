@@ -31,15 +31,14 @@ const user = {
   actions: {
     // 登录
     Login({ commit }, userInfo) {
-      const account = userInfo.account.trim()
+      const username = userInfo.username.trim()
       const password = userInfo.password
-      const code = userInfo.code
+      const captcha = userInfo.captcha
       const uuid = userInfo.uuid
       return new Promise((resolve, reject) => {
-        login(account, password, code, uuid).then(res => {
-          console.log(res)
-          setToken(res.token)
-          commit('SET_TOKEN', res.token)
+        login(username, password, captcha, uuid).then(res => {
+          setToken(res.access_token)
+          commit('SET_TOKEN', res.access_token)
           resolve()
         }).catch(error => {
           reject(error)

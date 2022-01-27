@@ -1,11 +1,11 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(account, password, code, uuid) {
+export function login(username, password, captcha, uuid) {
   const data = {
-    account,
+    username,
     password,
-    code,
+    captcha,
     uuid,
     client_id: process.env.VUE_APP_CLIENT_NAME,
     client_secret: process.env.VUE_APP_CLIENT_SECRET,
@@ -35,7 +35,7 @@ export function login(account, password, code, uuid) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/getInfo',
+    url: '/api/member/user/getUserInfo',
     method: 'get'
   })
 }

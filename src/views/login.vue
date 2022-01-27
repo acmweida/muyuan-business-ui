@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
       <h3 class="title">牧原商家后台</h3>
       <el-form-item prop="username">
-        <el-input v-model="loginForm.account" type="text" auto-complete="off" placeholder="账号">
+        <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号">
           <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
@@ -20,7 +20,7 @@
       </el-form-item>
       <el-form-item prop="code" v-if="captchaOnOff">
         <el-input
-          v-model="loginForm.code"
+          v-model="loginForm.captcha"
           auto-complete="off"
           placeholder="验证码"
           style="width: 63%"
@@ -65,20 +65,20 @@ export default {
       codeUrl: "",
       cookiePassword: "",
       loginForm: {
-        account: "",
+        username: "",
         password: "",
         rememberMe: false,
-        code: "",
+        captcha: "",
         uuid: ""
       },
       loginRules: {
-        account: [
+        username: [
           { required: true, trigger: "blur", message: "用户名不能为空" }
         ],
         password: [
           { required: true, trigger: "blur", message: "密码不能为空" }
         ],
-        code: [{ required: true, trigger: "change", message: "验证码不能为空" }]
+        captcha: [{ required: true, trigger: "change", message: "验证码不能为空" }]
       },
       loading: false,
       captchaOnOff: true,
@@ -109,11 +109,11 @@ export default {
       });
     },
     getCookie() {
-      const account = Cookies.get("account");
+      const username = Cookies.get("username");
       const password = Cookies.get("password");
       const rememberMe = Cookies.get('rememberMe')
       this.loginForm = {
-        username: account === undefined ? this.loginForm.account : account,
+        username: username === undefined ? this.loginForm.username : username,
         password: password === undefined ? this.loginForm.password : decrypt(password),
         rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
       };
@@ -121,14 +121,13 @@ export default {
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
-          debugger;
           this.loading = true;
           if (this.loginForm.rememberMe) {
-            Cookies.set("account", this.loginForm.account, { expires: 30 });
+            Cookies.set("username", this.loginForm.account, { expires: 30 });
             Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
             Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
           } else {
-            Cookies.remove("account");
+            Cookies.remove("username");
             Cookies.remove("password");
             Cookies.remove('rememberMe');
           }
