@@ -23,9 +23,9 @@
           <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
         </el-input>
       </el-form-item>
-      <el-form-item prop="code" v-if="captchaOnOff">
+      <el-form-item prop="captcha" v-if="captchaOnOff">
         <el-input
-          v-model="loginForm.code"
+          v-model="loginForm.captcha"
           auto-complete="off"
           placeholder="验证码"
           style="width: 63%"
@@ -72,10 +72,10 @@ export default {
     return {
       codeUrl: "",
       loginForm: {
-        username: "admin",
-        password: "admin123",
+        username: "",
+        password: "",
         rememberMe: false,
-        code: "",
+        captcha: "",
         uuid: ""
       },
       loginRules: {
@@ -85,7 +85,7 @@ export default {
         password: [
           { required: true, trigger: "blur", message: "请输入您的密码" }
         ],
-        code: [{ required: true, trigger: "change", message: "请输入验证码" }]
+        captcha: [{ required: true, trigger: "change", message: "请输入验证码" }]
       },
       loading: false,
       // 验证码开关

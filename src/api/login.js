@@ -43,8 +43,8 @@ export function getInfo() {
 // 退出方法
 export function logout() {
   return request({
-    url: '/auth/logout',
-    method: 'delete'
+    url: '/api/auth/login/logout',
+    method: 'get'
   })
 }
 
