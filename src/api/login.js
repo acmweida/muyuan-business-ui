@@ -56,3 +56,11 @@ export function getCodeImg() {
     method: 'get'
   })
 }
+
+export function register(data) {
+  return request({
+    url: '/api/member/user',
+    method: 'post',
+    data: data
+  })
+}
