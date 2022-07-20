@@ -7,7 +7,8 @@ const user = {
     name: '',
     avatar: '',
     roles: [],
-    permissions: []
+    permissions: [],
+    shopNo:'',
   },
 
   mutations: {
@@ -28,7 +29,10 @@ const user = {
     },
     SET_PERMISSIONS: (state, permissions) => {
       state.permissions = permissions
-    }
+    },
+    SET_SHOP_NO: (state, shopNo) => {
+      state.shopNo = shopNo
+    },
   },
 
   actions: {
@@ -56,6 +60,7 @@ const user = {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
           const user = res
+          const shopNo = user.shopNo
           const avatar = user.avatar == "" ? require("@/assets/images/profile.jpg") : user.avatar;
           if (res.roles && res.roles.length > 0) { // 验证返回的roles是否是一个非空数组
             commit('SET_ROLES', res.roles)
@@ -63,8 +68,10 @@ const user = {
           } else {
             commit('SET_ROLES', ['ROLE_DEFAULT'])
           }
-          commit('SET_NAME', user.userName)
+          commit('SET_NAME', user.username)
           commit('SET_AVATAR', avatar)
+          if (shopNo !== '' && shopNo !== undefined)
+             commit('SET_SHOP_NO', shopNo)
           resolve(res)
         }).catch(error => {
           reject(error)

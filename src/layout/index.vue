@@ -21,6 +21,7 @@ import { AppMain, Navbar, Settings, Sidebar, TagsView } from './components'
 import ResizeMixin from './mixin/ResizeHandler'
 import { mapState } from 'vuex'
 import variables from '@/assets/styles/variables.scss'
+import store from '../store'
 
 export default {
   name: 'Layout',
@@ -33,6 +34,11 @@ export default {
     TagsView
   },
   mixins: [ResizeMixin],
+  created() {
+    if (store.getters.shopNo === '') {
+      this.$router.push("/welcomne");
+    }
+  },
   computed: {
     ...mapState({
       theme: state => state.settings.theme,
