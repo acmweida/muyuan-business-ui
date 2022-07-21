@@ -6,3 +6,11 @@ export function getShop() {
     method: 'get'
   })
 }
+
+export function createShop(data) {
+  return request({
+    url: '/api/shop/shop/create',
+    method: 'post',
+    data: data
+  })
+}

@@ -29,6 +29,11 @@
 </template>
 
 <script>
+  import {createShop} from "@/api/shop";
+  import store from "../store";
+  import router from "../router";
+  import {Message} from "element-ui";
+
   export default {
     data() {
       return {
@@ -56,20 +61,17 @@
         this.$refs.form.validate(valid => {
           if (valid) {
             this.loading = true;
-            register(this.registerForm).then(res => {
-              const username = this.registerForm.username;
-              this.$alert("<font color='red'>恭喜你，您的账号 " + username + " 注册成功！</font>", '系统提示', {
-                dangerouslyUseHTMLString: true,
-                type: 'success'
-              }).then(() => {
-                this.$router.push("/login");
-              }).catch(() => {
-              });
+            createShop(this.form).then(res => {
+              store.dispatch('GetInfo').then(() => {
+                this.$router.push("/");
+              }).catch(err => {
+                store.dispatch('LogOut').then(() => {
+                  Message.error(err)
+                  next({path: '/'})
+                })
+              })
             }).catch(() => {
               this.loading = false;
-              if (this.captchaOnOff) {
-                this.getCode();
-              }
             })
           }
         });
