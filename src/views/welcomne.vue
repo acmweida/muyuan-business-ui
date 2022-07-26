@@ -31,7 +31,6 @@
 <script>
   import {createShop} from "@/api/shop";
   import store from "../store";
-  import router from "../router";
   import {Message} from "element-ui";
 
   export default {
