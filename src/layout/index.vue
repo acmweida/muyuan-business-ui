@@ -35,7 +35,7 @@ export default {
   },
   mixins: [ResizeMixin],
   created() {
-    if (store.getters.shopNo === '') {
+    if (store.getters.shopId === '' ) {
       this.$router.push("/welcomne");
     }
   },
