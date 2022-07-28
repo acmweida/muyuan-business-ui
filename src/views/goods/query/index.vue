@@ -9,34 +9,10 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="商品描述" prop="description">
-        <el-input
-          v-model="queryParams.description"
-          placeholder="请输入商品描述"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="商品标签逗号隔开" prop="tag">
-        <el-input
-          v-model="queryParams.tag"
-          placeholder="请输入商品标签逗号隔开"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="分类ID" prop="categoryCode">
+      <el-form-item label="分类" prop="categoryCode">
         <el-input
           v-model="queryParams.categoryCode"
-          placeholder="请输入分类ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="品牌ID" prop="brandId">
-        <el-input
-          v-model="queryParams.brandId"
-          placeholder="请输入品牌ID"
+          placeholder="请输入分类"
           clearable
           @keyup.enter.native="handleQuery"
         />
@@ -50,12 +26,23 @@
         />
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input
-          v-model="queryParams.price"
-          placeholder="请输入价格"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+        <div style="display: flex;gap: 6px;">
+          <el-input-number
+            v-model="queryParams.minPrice"
+            placeholder="最低"
+            clearable
+            :controls="false"
+            @keyup.enter.native="handleQuery"
+          />
+          至
+          <el-input-number
+            :controls="false"
+            placeholder="最高"
+            v-model="queryParams.maxPrice"
+            clearable
+            @keyup.enter.native="handleQuery"
+          />
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -72,7 +59,8 @@
           size="mini"
           @click="handleAdd"
           v-hasPermi="['product:goods:add']"
-        >新增</el-button>
+        >新增
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -83,7 +71,8 @@
           :disabled="single"
           @click="handleUpdate"
           v-hasPermi="['product:goods:edit']"
-        >修改</el-button>
+        >修改
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -94,7 +83,8 @@
           :disabled="multiple"
           @click="handleDelete"
           v-hasPermi="['product:goods:remove']"
-        >删除</el-button>
+        >删除
+        </el-button>
       </el-col>
       <el-col :span="1.5">
         <el-button
@@ -104,26 +94,22 @@
           size="mini"
           @click="handleExport"
           v-hasPermi="['product:goods:export']"
-        >导出</el-button>
+        >导出
+        </el-button>
       </el-col>
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
     <el-table v-loading="loading" :data="goodsList" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="${comment}" align="center" prop="id" />
-      <el-table-column label="产品名称" align="center" prop="name" />
-      <el-table-column label="商品描述" align="center" prop="description" />
-      <el-table-column label="商品标签逗号隔开" align="center" prop="tag" />
-      <el-table-column label="店铺ID" align="center" prop="shopId" />
-      <el-table-column label="分类ID" align="center" prop="categoryCode" />
-      <el-table-column label="品牌ID" align="center" prop="brandId" />
-      <el-table-column label="品牌名称" align="center" prop="brandName" />
-      <el-table-column label="主图URL" align="center" prop="mainPictureUrl" />
-      <el-table-column label="0-未上架 1-上架 2-删除" align="center" prop="status" />
-      <el-table-column label="价格" align="center" prop="price" />
-      <el-table-column label="${comment}" align="center" prop="creator" />
-      <el-table-column label="${comment}" align="center" prop="updater" />
+      <el-table-column type="selection" width="55" align="center"/>
+      <el-table-column label="" align="center" prop="name"/>
+      <el-table-column label="标签" align="center" prop="tag"/>
+      <el-table-column label="品牌名称" align="center" prop="brandName"/>
+      <el-table-column label="分类" align="center" prop="categoryName"/>
+      <el-table-column label="主图" align="center" prop="picture"/>
+      <el-table-column label="状态" align="center" prop="status"/>
+      <el-table-column label="价格" align="center" prop="price"/>
+      <el-table-column label="更新时间" align="center" prop="updater"/>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
           <el-button
@@ -132,14 +118,16 @@
             icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['product:goods:edit']"
-          >修改</el-button>
+          >修改
+          </el-button>
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['product:goods:remove']"
-          >删除</el-button>
+          >删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -156,59 +144,22 @@
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="产品名称" prop="name">
-          <el-input v-model="form.name" placeholder="请输入产品名称" />
-        </el-form-item>
-        <el-form-item label="商品描述" prop="description">
-          <el-input v-model="form.description" placeholder="请输入商品描述" />
+          <el-input v-model="form.name" placeholder="请输入产品名称"/>
         </el-form-item>
         <el-form-item label="商品标签逗号隔开" prop="tag">
-          <el-input v-model="form.tag" placeholder="请输入商品标签逗号隔开" />
-        </el-form-item>
-        <el-form-item label="店铺ID" prop="shopId">
-          <el-input v-model="form.shopId" placeholder="请输入店铺ID" />
+          <el-input v-model="form.tags" placeholder="请输入商品标签逗号隔开"/>
         </el-form-item>
         <el-form-item label="分类ID" prop="categoryCode">
-          <el-input v-model="form.categoryCode" placeholder="请输入分类ID" />
+          <el-input v-model="form.categoryCode" placeholder="请输入分类ID"/>
         </el-form-item>
         <el-form-item label="品牌ID" prop="brandId">
-          <el-input v-model="form.brandId" placeholder="请输入品牌ID" />
+          <el-input v-model="form.brandId" placeholder="请输入品牌ID"/>
         </el-form-item>
         <el-form-item label="品牌名称" prop="brandName">
-          <el-input v-model="form.brandName" placeholder="请输入品牌名称" />
-        </el-form-item>
-        <el-form-item label="主图URL" prop="mainPictureUrl">
-          <el-input v-model="form.mainPictureUrl" placeholder="请输入主图URL" />
-        </el-form-item>
-        <el-form-item label="创建人" prop="createBy">
-          <el-input v-model="form.createBy" placeholder="请输入创建人" />
-        </el-form-item>
-        <el-form-item label="创建时间" prop="createTime">
-          <el-date-picker clearable
-                          v-model="form.createTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择创建时间">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="修改时间" prop="updateTime">
-          <el-date-picker clearable
-                          v-model="form.updateTime"
-                          type="date"
-                          value-format="yyyy-MM-dd"
-                          placeholder="请选择修改时间">
-          </el-date-picker>
+          <el-input v-model="form.brandName" placeholder="请输入品牌名称"/>
         </el-form-item>
         <el-form-item label="价格" prop="price">
-          <el-input v-model="form.price" placeholder="请输入价格" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="creator">
-          <el-input v-model="form.creator" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="updateBy">
-          <el-input v-model="form.updateBy" placeholder="请输入${comment}" />
-        </el-form-item>
-        <el-form-item label="${comment}" prop="updater">
-          <el-input v-model="form.updater" placeholder="请输入${comment}" />
+          <el-input v-model="form.price" placeholder="请输入价格"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -220,7 +171,7 @@
 </template>
 
 <script>
-  import { listGoods, getGoods, delGoods, addGoods, updateGoods } from "@/api/goods";
+  import {listGoods, getGoods, delGoods, addGoods, updateGoods} from "@/api/goods";
 
   export default {
     name: "Goods",
@@ -249,23 +200,20 @@
           pageNum: 1,
           pageSize: 10,
           name: null,
-          description: null,
-          tag: null,
           shopId: null,
           categoryCode: null,
           brandId: null,
           brandName: null,
-          mainPictureUrl: null,
+          picture: null,
           status: null,
           price: null,
-          creator: null,
-          updater: null
+          minPrice:undefined,
+          maxPrice:undefined
         },
         // 表单参数
         form: {},
         // 表单校验
-        rules: {
-        }
+        rules: {}
       };
     },
     created() {
@@ -322,7 +270,7 @@
       // 多选框选中数据
       handleSelectionChange(selection) {
         this.ids = selection.map(item => item.id)
-        this.single = selection.length!==1
+        this.single = selection.length !== 1
         this.multiple = !selection.length
       },
       /** 新增按钮操作 */
@@ -364,12 +312,13 @@
       /** 删除按钮操作 */
       handleDelete(row) {
         const ids = row.id || this.ids;
-        this.$modal.confirm('是否确认删除商品编号为"' + ids + '"的数据项？').then(function() {
+        this.$modal.confirm('是否确认删除商品编号为"' + ids + '"的数据项？').then(function () {
           return delGoods(ids);
         }).then(() => {
           this.getList();
           this.$modal.msgSuccess("删除成功");
-        }).catch(() => {});
+        }).catch(() => {
+        });
       },
       /** 导出按钮操作 */
       handleExport() {
