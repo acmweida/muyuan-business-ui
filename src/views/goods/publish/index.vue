@@ -11,7 +11,19 @@
     <div v-if="step == 0">
       <el-form ref="form" :model="categoryForm" :rules="rules" label-width="80px">
         <el-form-item label="类目" prop="categoryCode">
-          <el-input v-model="categoryForm.categoryCode"/>
+          <el-select v-model="categoryForm.categoryCode" placeholder="请选择">
+            <el-option-group
+              v-for="group in options"
+              :key="group.label"
+              :label="group.label">
+              <el-option
+                v-for="item in group.options"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-option-group>
+          </el-select>
         </el-form-item>
       </el-form>
     </div>
