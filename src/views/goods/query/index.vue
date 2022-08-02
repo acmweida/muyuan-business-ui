@@ -171,7 +171,7 @@
 </template>
 
 <script>
-  import {listGoods, getGoods, delGoods, addGoods, updateGoods} from "@/api/goods";
+  import {listGoods, getGoods, delGoods, addGoods, updateGoods} from "@/api/goods/goods";
 
   export default {
     name: "Goods",
