@@ -11,7 +11,7 @@
     <el-divider></el-divider>
     <div v-if="step == 0" style="display: flex;justify-content: center;">
       <el-form ref="form" :model="categoryForm" :rules="rules" label-width="80px">
-        <el-form-item label="类目" prop="categoryCode" required>
+        <el-form-item label="类目">
           <el-select v-model="categoryCode2" placeholder="请选择">
             <el-option-group
               v-for="group in options"
@@ -44,6 +44,9 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item>
+            <el-button style="margin-top: 12px;" @click="next">确定</el-button>
+        </el-form-item>
       </el-form>
     </div>
     <div v-if="step == 1">
@@ -53,13 +56,13 @@
 
     </div>
 
-    <el-button style="margin-top: 12px;" @click="next">下一步</el-button>
 
   </div>
 </template>
 
 <script>
   import {treeSelect} from "@/api/goods/category";
+  import {options} from "@/api/goods/brand";
 
   export default {
     data() {
@@ -81,11 +84,16 @@
     watch: {
       categoryCode2: {
         handler(newValue, oldValue) {
+          this.categoryForm.categoryCode = null;
           this.getOption3th(newValue);
         }
       },
       'categoryForm.categoryCode': {
-
+        handler(newValue, oldValue) {
+          if (newValue != null) {
+            this.getBlandOptions(newValue);
+          }
+        }
       }
     },
     methods: {
@@ -108,14 +116,14 @@
             var options = [];
             var map = {};
             for (var index in res) {
-              map[res[index].value] = {
+              map[res[index].id] = {
                 label: res[index].label,
                 options: []
               }
             }
             for (var index in res2) {
               map[res2[index].parentId].options.push({
-                value: res2[index].value,
+                value: res2[index].id,
                 label: res2[index].label
               })
             }
@@ -130,14 +138,22 @@
           })
         })
       },
-      getBland(categoryCode) {
-
+      getBlandOptions(categoryCode) {
+        options({categoryCode: categoryCode}).then(res => {
+          var options = [];
+          for (var index in res) {
+            options.push({
+              value: res[index].id,
+              label: res[index].label
+            })
+          }
+          this.brandOption = options;
+        })
       },
       next() {
         if (this.step++ > 2) {
           this.step = 0;
         }
-
       }
     }
   }
